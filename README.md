@@ -74,9 +74,47 @@ Install dependencies via:
       NOTIFY_INTERVAL = 3600  # Seconds for timed notifications (0 to disable)
       Run the bot:textpython main.py
 ```
-4. Run the bot:
+4. Run the bot
    ```bash
-   python main.py      
+   python main.py
+
+!Important Security Note: Never commit your API keys or secrets to GitHub. Use .gitignore to exclude config.py or .env!
+
+## Usage
+
+Running the Bot: Execute main.py. The bot will connect to Binance, start monitoring markets, and apply the strategy.
+Telegram Commands (examples):
+/balance: Get current portfolio balance.
+/positions: List open positions.
+/pnl day: Daily profitability.
+/pnl week: Weekly PNL.
+/pnl month: Monthly PNL.
+
+Strategy Execution: The bot runs in a loop, checking conditions from strategy.py and executing trades via exchange_connector.py.
+Data Collection: Trades are logged to the database automatically for later analysis.
+
+## Database Schema (Example)
+
+The database stores closed trades for PNL calculations:
+
+Table: trades
+id: INTEGER PRIMARY KEY
+symbol: TEXT (e.g., 'BTCUSDT')
+entry_price: FLOAT
+exit_price: FLOAT
+quantity: FLOAT
+pnl: FLOAT
+timestamp: DATETIME
+
+
+Query examples in data_collector.py for aggregating PNL by time periods.
+
+## Contributing
+Contributions are welcome! Please fork the repo and submit a pull request. Focus on improving strategy, adding new indicators, or enhancing notifications.
+## License
+This project is licensed under the MIT License - see the LICENSE file for details.
+## Disclaimer
+This bot is for educational purposes only. Trading cryptocurrencies involves high risk. Use at your own discretion and never risk more than you can afford to lose. The author is not responsible for any financial losses.
 
 
 
