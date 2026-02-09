@@ -51,31 +51,31 @@ Install dependencies via:
    textpip install -r requirements.txt
 3. Set up configuration:
 # Binance API
-      ```bash
+   ```bash
       BINANCE_API_KEY = 'your_binance_api_key'
       BINANCE_SECRET_KEY = 'your_binance_secret_key'
-
+```
 # Telegram Bot
-      ```bash
+   ```bash
       TELEGRAM_BOT_TOKEN = 'your_telegram_bot_token'
       TELEGRAM_CHAT_ID = 'your_chat_id'  # For notifications
-
+```
 # Database
-      ```bash
+   ```bash
       DB_PATH = 'trades.db'  # SQLite file path
-
+```
 # Strategy Settings
-      ```bash
+   ```bash
       RISK_PER_TRADE = 0.01  # 1% of portfolio per trade
       STRATEGY_PARAMS = {'ma_short': 50, 'ma_long': 200}  # Example for moving average strategy
-
+```
 # Notification Settings
-      ```bash
+   ```bash
       NOTIFY_INTERVAL = 3600  # Seconds for timed notifications (0 to disable)
       Run the bot:textpython main.py
-
+```
 4. Run the bot:
-      ```bash
+   ```bash
       textpython main.py      
 
 
