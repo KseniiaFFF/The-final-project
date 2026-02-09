@@ -76,7 +76,7 @@ Install dependencies via:
 ```
 4. Run the bot:
    ```bash
-      textpython main.py      
+   python main.py      
 
 
 
