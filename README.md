@@ -1,6 +1,6 @@
 # The-final-project
-#Trading Bot for Binance with Risk Management and Telegram Notifications
-1. Overview
+# Trading Bot for Binance with Risk Management and Telegram Notifications
+## Overview
 This project is a simple trading bot designed for the Binance cryptocurrency exchange. It implements a basic trading strategy with built-in risk management features. The bot uses Binance API keys for trading operations and integrates with Telegram for real-time notifications about portfolio balance, open positions, and performance metrics. A database is used to store information about closed trades for calculating PNL (Profit and Loss) without considering deposits or withdrawals.
 The bot supports customizable notifications: either timed updates on balance changes or on-demand queries via Telegram buttons/commands for balance, open positions, daily/weekly/monthly profitability.
 The code is modularized into several Python files for better maintainability:
@@ -12,7 +12,7 @@ exchange_connector.py: Deals with Binance API connections and operations.
 config.py: Settings and API keys
 (Additional files may be added as needed during development, e.g., main.py for running the bot.)
 
-2. Features
+## Features
 
 Trading Strategy: A simple strategy (e.g., based on moving averages or other indicators – to be specified/implemented). Includes risk management: position sizing based on account balance, stop-loss, take-profit levels.
 Risk Calculation: Automatically calculates risk per trade (e.g., max 1-2% of portfolio per trade) to prevent significant losses.
@@ -25,7 +25,7 @@ Queries for: Current balance, open positions, PNL for day/week/month.
 Database Integration: Stores closed trade data for historical analysis and profitability calculations (pure PNL, excluding deposits/withdrawals). Supports SQLite or other lightweight DB (e.g., PostgreSQL for scalability).
 Modular Design: Code separated into files for easy extension and debugging.
 
-3. Requirements
+## Requirements
 
 Python 3.8+
 Libraries:
@@ -41,7 +41,42 @@ Install dependencies via:
    ```bash
    pip install -r requirements.txt
  ```
-4. Installation
+## Installation
+1. Clone the repository:
+   ```bash
+   textgit clone https://github.com/yourusername/trading-bot.git
+   cd trading-bot
+2. Install required packages:
+   ```bash
+   textpip install -r requirements.txt
+3. Set up configuration:
+# Binance API
+      ```bash
+      BINANCE_API_KEY = 'your_binance_api_key'
+      BINANCE_SECRET_KEY = 'your_binance_secret_key'
+
+# Telegram Bot
+      ```bash
+      TELEGRAM_BOT_TOKEN = 'your_telegram_bot_token'
+      TELEGRAM_CHAT_ID = 'your_chat_id'  # For notifications
+
+# Database
+      ```bash
+      DB_PATH = 'trades.db'  # SQLite file path
+
+# Strategy Settings
+      ```bash
+      RISK_PER_TRADE = 0.01  # 1% of portfolio per trade
+      STRATEGY_PARAMS = {'ma_short': 50, 'ma_long': 200}  # Example for moving average strategy
+
+# Notification Settings
+      ```bash
+      NOTIFY_INTERVAL = 3600  # Seconds for timed notifications (0 to disable)
+      Run the bot:textpython main.py
+
+4. Run the bot:
+      ```bash
+      textpython main.py      
 
 
 
