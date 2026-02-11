@@ -1,30 +1,36 @@
 from API_TG import bot
-from db_tg import init_db
-from db_tg import reset_user
-from db_tg import save_keys
-from db_tg import get_keys
-from keyb_robot import create_keyboards
-from menu_robot import support, faq, cancel_handler, state_bot
+from db_tg import init_db, reset_user, save_keys, set_robot_running, set_robot_stopped, get_keys
+from keyb_robot import create_keyboards, robot_menu
+from menu_robot import support, faq, cancel_handler
+from strategy import pnl, settings
 from telebot import types
 
 BUTTON_HANDLERS = {
-    'Запустить/остановить робота': state_bot,
+    'Робот': robot_menu,
     'Поддержка': support,
     'Частые вопросы': faq,
-    'Отмена': cancel_handler
+    'Отмена': cancel_handler,
+    'Начать торговлю' : set_robot_running,
+    'Остановить торговлю' : set_robot_stopped,
+    'Настройки' : settings,
+    'PNL' : pnl,
+    'Назад' : create_keyboards
+
 }
 
 
-# init_db()
+init_db()
 
 @bot.message_handler(commands=["start"])
 def start(message):
     chat_id = message.chat.id
 
-    reset_user(chat_id)
-
-    bot.send_message(chat_id, "🔐 Введите API Binance")
-    bot.register_next_step_handler(message, get_api_key)
+    if get_keys(chat_id):
+        bot.send_message(chat_id, "✅ Ключи уже сохранены.")
+        create_keyboards(message)
+    else:
+        bot.send_message(chat_id, "🔐 Введите API Binance")
+        bot.register_next_step_handler(message, get_api_key)
 
 def get_api_key(message):
     chat_id = message.chat.id
@@ -40,8 +46,8 @@ def get_api_key(message):
 
     bot.send_message(chat_id, "Введите SECRET KEY")
     bot.register_next_step_handler(message, get_secret_key)
- 
 
+ 
 def get_secret_key(message):
     chat_id = message.chat.id
     text = message.text.strip()
@@ -71,19 +77,6 @@ def router(message):
             message.chat.id,
             "Используйте кнопки меню 👇"
         )
- 
-
-
-def trade(chat_id):
-    keys = get_keys(chat_id)
-
-    if not keys or None in keys:
-        bot.send_message(chat_id, "❌ Ключи не заданы. Нажмите /start")
-        return
-
-    api_key, secret_key = keys
-
-    print(api_key, secret_key)  
 
 
 bot.polling()    

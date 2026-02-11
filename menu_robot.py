@@ -3,9 +3,6 @@ from API_TG import bot
 from db_tg import reset_user
 
 
-def state_bot(message):
-    pass
-
 def support(message):
     markup = types.InlineKeyboardMarkup()
     markup.add(

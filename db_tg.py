@@ -1,4 +1,5 @@
 import sqlite3
+from API_TG import bot
 
 DB_NAME = "users.db"
 
@@ -11,7 +12,8 @@ def init_db():
         CREATE TABLE IF NOT EXISTS users (
             chat_id INTEGER PRIMARY KEY,
             api_key TEXT,
-            secret_key TEXT
+            secret_key TEXT,
+            robot_status TEXT
         )
         """)
 
@@ -47,4 +49,49 @@ def get_keys(chat_id):
         FROM users
         WHERE chat_id = ?
         """, (chat_id,))
-        return cursor.fetchone()
+        result = cursor.fetchone()
+
+        if result and result[0] and result[1]:
+            return True
+
+        return False
+
+def set_robot_running(message):
+    chat_id = message.chat.id
+    with get_connection() as conn:
+        conn.execute("""
+        UPDATE users
+        SET robot_status = 'running'
+        WHERE chat_id = ?
+        """, (chat_id,))
+
+    bot.send_message(
+            message.chat.id,
+            "Уже в поиске сделок 🫡"
+        )    
+
+def set_robot_stopped(message):
+    chat_id = message.chat.id
+    with get_connection() as conn:
+        conn.execute("""
+        UPDATE users
+        SET robot_status = 'stopped'
+        WHERE chat_id = ?
+        """, (chat_id,))
+
+    bot.send_message(
+            message.chat.id,
+            "Торговля остановлена 🫡"
+        )     
+
+def is_robot_active(chat_id):
+    with get_connection() as conn:
+        cursor = conn.execute("""
+        SELECT robot_status FROM users
+        WHERE chat_id = ?
+        """, (chat_id,))
+        result = cursor.fetchone()
+
+        if result and result[0] == 'running':
+            return True
+        return False
