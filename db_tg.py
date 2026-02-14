@@ -27,7 +27,6 @@ def reset_user(chat_id):
         """, (chat_id,))
 
 
-
 def save_keys(chat_id, api_key=None, secret_key=None):
     with get_connection() as conn:
         conn.execute("""

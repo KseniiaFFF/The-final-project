@@ -8,7 +8,8 @@ def create_keyboards(message):
     keyboard.add(
         types.KeyboardButton('Робот'),
         types.KeyboardButton('Частые вопросы'),
-        types.KeyboardButton('Поддержка')
+        types.KeyboardButton('Поддержка'),
+        types.KeyboardButton('Редактировать ключи')
     )
     keyboard.add(types.KeyboardButton('Отмена'))
 
@@ -31,7 +32,8 @@ def robot_menu(message):
 
     keyboard.add(
         types.KeyboardButton('Настройки'),
-        types.KeyboardButton('PNL')
+        types.KeyboardButton('PNL'),
+        types.KeyboardButton('Запустить сканнер')
     )
     keyboard.add(types.KeyboardButton('Назад'))
 
