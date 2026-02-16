@@ -90,7 +90,7 @@ binance-futures-bot/
 └─ users.db                # база данных (в .gitignore!)
 ```
 ## Roadmap / Что доделать
-
+```text
  Полноценная торговля (открытие/закрытие позиций)
  Настраиваемый порог изменения, интервал, топ-N пар
  Inline-кнопки и более удобное меню
@@ -98,7 +98,7 @@ binance-futures-bot/
  Docker + docker-compose для деплоя
  Тестнет-режим Binance
  Статистика и график PNL
-
+```
 
  ==============================
 
@@ -189,7 +189,7 @@ The-final-project/
 ```
 
 ## Roadmap / To Do
-
+```text
  Implement real position opening/closing
  Add configurable change threshold, timeframe, top-N pairs
  Inline keyboards and improved menu navigation
@@ -197,3 +197,4 @@ The-final-project/
  Docker + docker-compose deployment
  Binance testnet support
  PNL statistics and performance charts
+```
