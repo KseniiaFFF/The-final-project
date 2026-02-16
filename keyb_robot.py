@@ -11,7 +11,7 @@ def create_keyboards(message):
         types.KeyboardButton('Поддержка'),
         types.KeyboardButton('Редактировать ключи')
     )
-    keyboard.add(types.KeyboardButton('Отмена'))
+    keyboard.add(types.KeyboardButton('Стоп'))
 
     bot.send_message(
         message.chat.id,

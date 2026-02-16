@@ -95,6 +95,9 @@ def scanner_loop(chat_id):
         signals = scan_market()
 
         for symbol, change in signals:
+            if not active_scanners.get(chat_id):
+                return
+             
             direction = "📈 Рост" if change > 0 else "📉 Падение"
 
             bot.send_message(
@@ -102,7 +105,10 @@ def scanner_loop(chat_id):
                 f"🚨 {symbol} | {direction} | {change}%"
             )
 
-        time.sleep(180)
+        for _ in range(180):
+            if not active_scanners.get(chat_id):
+                return
+            time.sleep(1)
 
 
 def start_scanner(message):

@@ -1,6 +1,7 @@
 from telebot import types
 from API_TG import bot  
 from db_tg import reset_user
+from binance_info import stop_scanner
 
 
 def support(message):
@@ -39,6 +40,7 @@ def cancel_handler(message):
     chat_id = message.chat.id
 
     reset_user(chat_id)
+    stop_scanner(message)
 
     bot.send_message(
         chat_id,
