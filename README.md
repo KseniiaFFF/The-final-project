@@ -76,16 +76,19 @@ python telegram_handler.py
 - Получай уведомления о сильных движениях
 
 ## Структура проекта
-├── API_TG.py              # инициализация бота
-├── telegram_handler.py    # основной роутер и обработчики
-├── binance_info.py        # сканер рынка + логика уведомлений
-├── db_tg.py               # работа с SQLite
-├── check_user_api.py      # валидация ключей Binance
-├── keyb_robot.py          # клавиатуры
-├── menu_robot.py          # поддержка, FAQ, отмена
-├── strategy.py            # настройки + PNL (заготовка)
-└── users.db               # база данных (git ignore!)
 
+```text
+binance-futures-bot/
+├─ API_TG.py               # инициализация бота
+├─ telegram_handler.py     # основной роутер и обработчики
+├─ binance_info.py         # сканер рынка + логика уведомлений
+├─ db_tg.py                # работа с SQLite
+├─ check_user_api.py       # валидация ключей Binance
+├─ keyb_robot.py           # клавиатуры
+├─ menu_robot.py           # поддержка, FAQ, отмена
+├─ strategy.py             # настройки + PNL (заготовка)
+└─ users.db                # база данных (в .gitignore!)
+```
 ## Roadmap / Что доделать
 
  Полноценная торговля (открытие/закрытие позиций)
