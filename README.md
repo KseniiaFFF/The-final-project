@@ -1,227 +1,97 @@
-# The-final-project
-# Trading Bot for Binance with Risk Management and Telegram Notifications
-## Overview
-This project is a simple trading bot designed for the Binance cryptocurrency exchange. It implements a basic trading strategy with built-in risk management features. The bot uses Binance API keys for trading operations and integrates with Telegram for real-time notifications about portfolio balance, open positions, and performance metrics. A database is used to store information about closed trades for calculating PNL (Profit and Loss) without considering deposits or withdrawals.
-The bot supports customizable notifications: either timed updates on balance changes or on-demand queries via Telegram buttons/commands for balance, open positions, daily/weekly/monthly profitability.
-The code is modularized into several Python files for better maintainability:
+# Binance Futures Scanner & Trading Bot (Telegram)
 
-strategy.py: Contains all functions related to the trading strategy and risk calculations.
-data_collector.py: Handles collecting and storing balance and trade data into the database.
-telegram_handler.py: Manages Telegram bot interactions and notifications.
-exchange_connector.py: Deals with Binance API connections and operations.
-config.py: Settings and API keys
-(Additional files may be added as needed during development, e.g., main.py for running the bot.)
+Telegram-бот для сканирования рынка Binance Futures + (в разработке) автоматическая торговля по простым сигналам.
 
-## Features
+Получай уведомления о сильных движениях (≥2% за 3 минуты) и управляй торговым роботом прямо в Telegram.
 
-Trading Strategy: A simple strategy (e.g., based on moving averages or other indicators – to be specified/implemented). Includes risk management: position sizing based on account balance, stop-loss, take-profit levels.
-Risk Calculation: Automatically calculates risk per trade (e.g., max 1-2% of portfolio per trade) to prevent significant losses.
-Binance Integration: Uses official Binance API for fetching market data, placing orders, and managing positions.
-Telegram Notifications:
-Real-time alerts on balance changes, position status.
-Configurable modes: Timed notifications (e.g., every hour) or on-demand via buttons/commands.
-Queries for: Current balance, open positions, PNL for day/week/month.
+## Возможности (на текущий момент)
 
-Database Integration: Stores closed trade data for historical analysis and profitability calculations (pure PNL, excluding deposits/withdrawals). Supports SQLite or other lightweight DB (e.g., PostgreSQL for scalability).
-Modular Design: Code separated into files for easy extension and debugging.
+- Сканирование фьючерсных пар USDT с объёмом ≥ $50M
+- Уведомления о движении цены ≥ 2% за последние 20 свечей 3m
+- Ввод и проверка Binance API-ключей (Spot + Futures)
+- Запуск/остановка сканера и "робота" (пока заглушка)
+- Простое меню настроек и статистики PNL (в разработке)
+- SQLite база для хранения ключей и статусов пользователей
 
-## Requirements
-
-Python 3.8+
-Libraries:
-ccxt or binance for Binance API interactions.
-python-telegram-bot for Telegram integration.
-sqlite3 or SQLAlchemy for database operations.
-Other dependencies: pandas for data handling, ta-lib for technical indicators (if needed).
-
-Binance API keys (with trading permissions).
-Telegram Bot Token (create via BotFather).
-
-Install dependencies via:
-   ```bash
-   pip install -r requirements.txt
- ```
-## Installation
-1. Clone the repository:
-   ```bash
-   textgit clone https://github.com/yourusername/trading-bot.git
-   cd trading-bot
-2. Install required packages:
-   ```bash
-   textpip install -r requirements.txt
-3. Set up configuration:
-# Binance API
-   ```bash
-      BINANCE_API_KEY = 'your_binance_api_key'
-      BINANCE_SECRET_KEY = 'your_binance_secret_key'
-```
-# Telegram Bot
-   ```bash
-      TELEGRAM_BOT_TOKEN = 'your_telegram_bot_token'
-      TELEGRAM_CHAT_ID = 'your_chat_id'  # For notifications
-```
-# Database
-   ```bash
-      DB_PATH = 'trades.db'  # SQLite file path
-```
-# Strategy Settings
-   ```bash
-      RISK_PER_TRADE = 0.01  # 1% of portfolio per trade
-      STRATEGY_PARAMS = {'ma_short': 50, 'ma_long': 200}  # Example for moving average strategy
-```
-# Notification Settings
-   ```bash
-      NOTIFY_INTERVAL = 3600  # Seconds for timed notifications (0 to disable)
-      Run the bot:textpython main.py
-```
-4. Run the bot
-   ```bash
-   python main.py
-
-!Important Security Note: Never commit your API keys or secrets to GitHub. Use .gitignore to exclude config.py or .env!
-
-## Usage
-
-Running the Bot: Execute main.py. The bot will connect to Binance, start monitoring markets, and apply the strategy.
-Telegram Commands (examples):
-/balance: Get current portfolio balance.
-/positions: List open positions.
-/pnl day: Daily profitability.
-/pnl week: Weekly PNL.
-/pnl month: Monthly PNL.
-
-Strategy Execution: The bot runs in a loop, checking conditions from strategy.py and executing trades via exchange_connector.py.
-Data Collection: Trades are logged to the database automatically for later analysis.
-
-## Database Schema (Example)
-
-The database stores closed trades for PNL calculations:
-
-Table: trades
-id: INTEGER PRIMARY KEY
-symbol: TEXT (e.g., 'BTCUSDT')
-entry_price: FLOAT
-exit_price: FLOAT
-quantity: FLOAT
-pnl: FLOAT
-timestamp: DATETIME
-
-
-Query examples in data_collector.py for aggregating PNL by time periods.
-
-## Contributing
-Contributions are welcome! Please fork the repo and submit a pull request. Focus on improving strategy, adding new indicators, or enhancing notifications.
-## License
-This project is licensed under the MIT License - see the LICENSE file for details.
-## Disclaimer
-This bot is for educational purposes only. Trading cryptocurrencies involves high risk. Use at your own discretion and never risk more than you can afford to lose. The author is not responsible for any financial losses.
-
-
-
-# Торговый робот для Binance с управлением рисками и уведомлениями в Telegram
-
-## О проекте
-
-Это простой торговый бот для биржи Binance. Реализована базовая торговая стратегия с обязательным контролем рисков.  
-Бот использует API-ключи Binance для торговли и Telegram-бота для уведомлений.  
-Есть база данных для хранения истории закрытых сделок и расчёта чистой прибыли/убытка (PnL) без учёта вводов и выводов средств.
-
-Бот умеет:
-- отправлять уведомления по расписанию (о балансе, позициях, изменениях)
-- или выдавать информацию по командам/кнопкам в Telegram
-- показывать: текущий баланс, открытые позиции, доходность за день / неделю / месяц
-
-Код разбит на несколько файлов для удобства:
-
-- `strategy.py` - вся логика торговой стратегии и расчёт рисков  
-- `data_collector.py` - сбор данных о балансе и сделках → запись в базу  
-- `telegram_handler.py` - работа с Telegram (уведомления, команды, кнопки)  
-- `exchange_connector.py` - взаимодействие с Binance API
-- `config.py` - основные конфигурации, ключи
-- (по мере разработки могут появиться `main.py`, `utils.py` и др.)
-
-## Возможности
-
-- Простая торговая стратегия (например, пересечение скользящих средних или другая - будет дописано)  
-- Управление рисками: размер позиции не более 1–2% от депозита, стоп-лосс, тейк-профит  
-- Интеграция с Binance (через библиотеку `ccxt` или `python-binance`)  
-- Уведомления в Telegram:  
-  - автоматические по таймеру  
-  - по запросу через команды или кнопки  
-  - `/balance`, `/positions`, `/pnl day`, `/pnl week`, `/pnl month`  
-- Хранение истории сделок в базе (SQLite или другая) для точного подсчёта PnL  
-- Модульная структура кода
+**В планах (roadmap):**
+- Реальная торговля по сигналам сканера
+- Настраиваемый риск на сделку, плечо, стоп/тейк
+- Trailing stop и фильтры пар
+- Мультипользовательская поддержка без конфликтов
 
 ## Требования
 
-- Python 3.8+  
-- Библиотеки:
-  - `ccxt` или `python-binance`
-  - `python-telegram-bot`
-  - `sqlite3` / `SQLAlchemy`
-  - `pandas` (удобно для расчётов)
-  - опционально: `ta` / `talib` для индикаторов
+- Python 3.9+
+- Telegram Bot Token (получи у @BotFather)
+- Binance API Key + Secret (с правами на Futures)
 
 ## Установка
 
-1. Клонируйте репозиторий:
-   ```bash
-   git clone https://github.com/ВАШ_НИК/trading-bot.git
-   cd trading-bot
-
-2. Установите зависимости:
-   ```bash
-    pip install -r requirements.txt
-3. Настройте конфиг
-# Binance
+1. Клонируй репозиторий
 ```bash
-BINANCE_API_KEY    = 'ваш_api_key'
-BINANCE_SECRET_KEY = 'ваш_secret_key'
-```
-# Telegram
-```bash
-TELEGRAM_BOT_TOKEN = '123456:AAF1b2C3d.....'
-TELEGRAM_CHAT_ID   = 'ваш_chat_id'
-```
-# База данных
-```bash
-DB_PATH = 'trades.db'
-```
-# Настройки стратегии
-```bash
-RISK_PER_TRADE = 0.01       # 1% от депозита на сделку
-STRATEGY_PARAMS = {'ma_short': 50, 'ma_long': 200}
+git clone https://github.com/KseniiaFFF/The-final-project
+cd The-final-project
 ```
 
-# Уведомления
+2. Создай виртуальное окружение
 ```bash
-NOTIFY_INTERVAL = 3600      # интервал в секундах (0 = отключено)
+python -m venv venv
+source venv/bin/activate    # Linux/Mac
+venv\Scripts\activate       # Windows
 ```
 
-!Важно: не коммитьте ключи в репозиторий! Добавьте config.py, .env в .gitignore!
+3. Установи зависимости
+```bash
+pip install -r requirements.txt
+```
 
-Команды в Telegram (примеры)
+(если файла requirements.txt ещё нет — создай его с содержимым:)
+```bash
+pyTelegramBotAPI==4.22.1
+requests==2.32.3
+python-dotenv==1.0.1
+```
 
-/balance — текущий баланс портфеля
-/positions — открытые позиции
-/pnl day — результат за сегодня
-/pnl week — за неделю
-/pnl month — за месяц
+4. Создай файл API_TG.py в корне проекта
+```bash
+import telebot
+ 
+TOKEN = "ваш тг токен"
+bot = telebot.TeleBot(TOKEN)
+```
 
-База данных (пример структуры)
-Таблица trades:
+5. Запусти бота
+```bash
+python telegram_handler.py
+```
 
-id
-symbol (BTCUSDT, ETHUSDT и т.д.)
-entry_price
-exit_price
-quantity
-pnl
-timestamp
+## Как пользоваться
 
-Предупреждение
-Это учебный / экспериментальный проект.
-Торговля криптовалютой связана с высоким риском потери средств.
-Используйте на свой страх и риск. Автор не несёт ответственности за убытки.
-Удачной торговли и профита! 🚀
-   
+- Найди своего бота в Telegram и напиши /start
+- Выбери вариант:
+- Ввести API (для торговли(в разработке))
+- Продолжить без API (только сканнер)
+
+- В меню «Робот» → «Запустить сканнер»
+- Получай уведомления о сильных движениях
+
+## Структура проекта
+├── API_TG.py              # инициализация бота
+├── telegram_handler.py    # основной роутер и обработчики
+├── binance_info.py        # сканер рынка + логика уведомлений
+├── db_tg.py               # работа с SQLite
+├── check_user_api.py      # валидация ключей Binance
+├── keyb_robot.py          # клавиатуры
+├── menu_robot.py          # поддержка, FAQ, отмена
+├── strategy.py            # настройки + PNL (заготовка)
+└── users.db               # база данных (git ignore!)
+
+## Roadmap / Что доделать
+
+ Полноценная торговля (открытие/закрытие позиций)
+ Настраиваемый порог изменения, интервал, топ-N пар
+ Inline-кнопки и более удобное меню
+ Логирование + уведомления об ошибках
+ Docker + docker-compose для деплоя
+ Тестнет-режим Binance
+ Статистика и график PNL
