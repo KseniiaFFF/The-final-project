@@ -2,6 +2,9 @@ import requests
 import time
 import threading
 from API_TG import bot
+import logging
+
+logger = logging.getLogger(__name__)
 
 BASE_URL = "https://fapi.binance.com"
 MIN_VOLUME = 50_000_000
@@ -66,6 +69,7 @@ def check_pair(symbol):
 
     except Exception as e:
         print(f"Ошибка {symbol}: {e}")
+        logging.exception(f'Ошибка {symbol}: {e}')
         return None
 
 
@@ -128,6 +132,7 @@ def start_scanner(message):
     thread.start()
 
     bot.send_message(chat_id, (f'({CHANGE_THRESHOLD} Сканер запущен)'))
+    logger.info(f'Сканер запущен| user_name = {message.chat.username}, chat_id = {chat_id}')
 
 
 def stop_scanner(message):
@@ -135,3 +140,4 @@ def stop_scanner(message):
 
     active_scanners[chat_id] = False
     bot.send_message(chat_id, " Сканер остановлен")
+    logger.info(f'Сканер остановлен| user_name = {message.chat.username}, chat_id = {chat_id}')

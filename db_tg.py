@@ -1,5 +1,8 @@
 import sqlite3
 from API_TG import bot
+import logging
+
+logger = logging.getLogger(__name__)
 
 DB_NAME = "users.db"
 
@@ -18,6 +21,7 @@ def init_db():
         """)
 
 def reset_user(chat_id):
+
     with get_connection() as conn:
         conn.execute("""
         UPDATE users
@@ -25,6 +29,8 @@ def reset_user(chat_id):
             secret_key = NULL
         WHERE chat_id = ?
         """, (chat_id,))
+
+    logger.info(f'Команда "Стоп", данные стерты | chat_id = {chat_id}')     
 
 
 def save_keys(chat_id, api_key=None, secret_key=None):
@@ -57,12 +63,15 @@ def get_keys(chat_id):
 
 def set_robot_running(message):
     chat_id = message.chat.id
+
     with get_connection() as conn:
         conn.execute("""
         UPDATE users
         SET robot_status = 'running'
         WHERE chat_id = ?
         """, (chat_id,))
+
+    logger.info(f'Торговля запущена| user_name = {message.chat.username}, chat_id = {chat_id}')    
 
     bot.send_message(
             message.chat.id,
@@ -71,12 +80,15 @@ def set_robot_running(message):
 
 def set_robot_stopped(message):
     chat_id = message.chat.id
+
     with get_connection() as conn:
         conn.execute("""
         UPDATE users
         SET robot_status = 'stopped'
         WHERE chat_id = ?
         """, (chat_id,))
+
+    logger.info(f'Торговля остановлена| user_name = {message.chat.username}, chat_id = {chat_id}')       
 
     bot.send_message(
             message.chat.id,
