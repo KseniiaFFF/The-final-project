@@ -1,45 +1,57 @@
+#сканер рынка
+
 import requests
 import time
 import threading
-from API_TG import bot
 import logging
+
+from keyb_robot import robot_menu
+from config import BASE_URL, MIN_VOLUME, INTERVAL, LIMIT, CHANGE_THRESHOLD
+from API_TG import bot
 
 logger = logging.getLogger(__name__)
 
-BASE_URL = "https://fapi.binance.com"
-MIN_VOLUME = 50_000_000
-INTERVAL = "3m"
-LIMIT = 20
-CHANGE_THRESHOLD = 2.0
-
 active_scanners = {}
-last_signals = {}
 cached_pairs = []
+pairs_last_update = 0
+CACHE_TTL = 60 
 
-
+#получаем список торговых USDT пар,фильтр по объёму торгов(MIN_VOLUME), использует кэш на CACHE_TTL секунд
 def get_usdt_pairs():
-    global cached_pairs
+    global cached_pairs, pairs_last_update
 
-    if cached_pairs:
+    current_time = time.time()
+
+    if cached_pairs and (current_time - pairs_last_update) < CACHE_TTL:
         return cached_pairs
 
-    url = f"{BASE_URL}/fapi/v1/ticker/24hr"
-    response = requests.get(url, timeout=10)
-    data = response.json()
+    try:
+        url = f"{BASE_URL}/fapi/v1/ticker/24hr"
+        response = requests.get(url, timeout=10)
+        response.raise_for_status()
+        data = response.json()
 
-    pairs = []
+        pairs = []
 
-    for item in data:
-        symbol = item["symbol"]
-        quote_volume = float(item["quoteVolume"])
+        for item in data:
+            symbol = item["symbol"]
+            quote_volume = float(item["quoteVolume"])
 
-        if symbol.endswith("USDT") and quote_volume >= MIN_VOLUME:
-            pairs.append(symbol)
+            if symbol.endswith("USDT") and quote_volume >= MIN_VOLUME:
+                pairs.append(symbol)
 
-    cached_pairs = pairs
-    return pairs
+        cached_pairs = pairs
+        pairs_last_update = current_time
 
+        logger.info(f"Кэш пар обновлён. Найдено {len(pairs)} пар.")
 
+        return cached_pairs
+
+    except Exception:
+        logger.exception("Ошибка обновления списка пар")
+        return cached_pairs  
+
+#получает свечи(ТФ - INTERVAL) по символу
 def get_klines(symbol):
     url = f"{BASE_URL}/fapi/v1/klines"
 
@@ -52,7 +64,7 @@ def get_klines(symbol):
     response = requests.get(url, params=params, timeout=10)
     return response.json()
 
-
+#проверяет движение цены(CHANGE_THRESHOLD) за выбр период(LIMIT)
 def check_pair(symbol):
     try:
         klines = get_klines(symbol)
@@ -68,11 +80,10 @@ def check_pair(symbol):
         return None
 
     except Exception as e:
-        print(f"Ошибка {symbol}: {e}")
-        logging.exception(f'Ошибка {symbol}: {e}')
+        logger.exception(f'Ошибка {symbol}: {e}')
         return None
 
-
+#сортирует пары, с самым сильным движением в начале, возвр только пеервую пару
 def scan_market():
     pairs = get_usdt_pairs()
 
@@ -86,13 +97,13 @@ def scan_market():
         if change:
             results.append((symbol, change))
 
-        time.sleep(0.05)
+        time.sleep(0.01)
 
     results.sort(key=lambda x: abs(x[1]), reverse=True)
 
-    return results[:5]
+    return results[:1]
 
-
+#обеспечивает пост работу сканера, вывод сообщение в тг 
 def scanner_loop(chat_id):
     while active_scanners.get(chat_id):
 
@@ -109,12 +120,12 @@ def scanner_loop(chat_id):
                 f"🚨 {symbol} | {direction} | {change}%"
             )
 
-        for _ in range(180):
+        for _ in range(10):
             if not active_scanners.get(chat_id):
                 return
-            time.sleep(1)
+            # time.sleep(1)
 
-
+#запускает сканнер, выводит меню робота
 def start_scanner(message):
     chat_id = message.chat.id
 
@@ -134,10 +145,21 @@ def start_scanner(message):
     bot.send_message(chat_id, (f'({CHANGE_THRESHOLD} Сканер запущен)'))
     logger.info(f'Сканер запущен| user_name = {message.chat.username}, chat_id = {chat_id}')
 
+    robot_menu(message)
 
+#останавливает сканер, выводит меню робота
 def stop_scanner(message):
     chat_id = message.chat.id
+
+    if not active_scanners.get(chat_id, False):
+        bot.send_message(chat_id, "Сканер и так не запущен")
+        return
 
     active_scanners[chat_id] = False
     bot.send_message(chat_id, " Сканер остановлен")
     logger.info(f'Сканер остановлен| user_name = {message.chat.username}, chat_id = {chat_id}')
+
+    robot_menu(message)  
+
+
+      

@@ -1,6 +1,6 @@
 import logging
 
-
+#базовые параметры для логов
 def set():
     logging.basicConfig(filename = 'log_tg_bot.txt',
                     level=logging.INFO,
