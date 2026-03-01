@@ -1,23 +1,26 @@
 # Binance Futures Scanner & Trading Bot (Telegram)
 
-Telegram-бот для сканирования рынка Binance Futures + (в разработке) автоматическая торговля по простым сигналам.
-
-Получай уведомления о сильных движениях (≥2% за 3 минуты) и управляй торговым роботом прямо в Telegram.
+Telegram-бот для сканирования рынка Binance Futures и автоматической торговли по простым сигналам.  
+Получай уведомления о сильных движениях цены (≥2% за 3 минуты) и управляй торговым роботом прямо в Telegram.  
+Бот работает на тестнете Binance для безопасности, но можно адаптировать для реального аккаунта.
 
 ## Возможности (на текущий момент)
 
-- Сканирование фьючерсных пар USDT с объёмом ≥ $50M
-- Уведомления о движении цены ≥ 2% за последние 20 свечей 3m
-- Ввод и проверка Binance API-ключей (Spot + Futures)
-- Запуск/остановка сканера и "робота" (пока заглушка)
-- Простое меню настроек и статистики PNL (в разработке)
-- SQLite база для хранения ключей и статусов пользователей
+- **Сканер рынка**: Автоматическое сканирование фьючерсных пар USDT с объёмом торгов ≥ $50M. Уведомления о движении цены ≥ 2% за последние 20 свечей (3m таймфрейм).
+- **Автоматическая торговля**: Открытие LONG/SHORT позиций по сигналам сканера. Расчёт стоп-лосса (SL) на основе волатильности, тейк-профита (TP) в 2x от SL. Риск-менеджмент: настраиваемый риск на сделку (0.1–5% от депозита), максимальное плечо (1–125x).
+- **Ввод и валидация API-ключей**: Поддержка Binance Futures (тестнет). Проверка ключей на доступ к торговле.
+- **Меню в Telegram**: Запуск/остановка сканера и торговли, настройки (риск, плечо), статистика PNL (нереализованная прибыль/убыток по открытым позициям).
+- **База данных**: SQLite для хранения API-ключей, статусов и настроек пользователей.
+- **Логирование**: Детальные логи в файл `log_tg_bot.txt` для отладки.
+
+Бот поддерживает нескольких пользователей без конфликтов (мультипоточность через threading).
 
 **В планах (roadmap):**
-- Реальная торговля по сигналам сканера
-- Настраиваемый риск на сделку, плечо, стоп/тейк
-- Trailing stop и фильтры пар
-- Мультипользовательская поддержка без конфликтов
+- Добавить дополнительные фильтры пар (например, по волатильности или тренду).
+- Интеграция с реальным Binance API (сейчас только тестнет).
+- Улучшенная статистика: Графики PNL, история сделок.
+- Inline-кнопки для меню, уведомления об ошибках в Telegram.
+- Фильтры сигналов: Настраиваемый порог изменения, интервал
 
 ## Требования
 
@@ -78,26 +81,21 @@ python telegram_handler.py
 ## Структура проекта
 
 ```text
-binance-futures-bot/
-├─ API_TG.py               # инициализация бота
-├─ telegram_handler.py     # основной роутер и обработчики
-├─ binance_info.py         # сканер рынка + логика уведомлений
-├─ db_tg.py                # работа с SQLite
-├─ check_user_api.py       # валидация ключей Binance
-├─ keyb_robot.py           # клавиатуры
-├─ menu_robot.py           # поддержка, FAQ, отмена
-├─ strategy.py             # настройки + PNL (заготовка)
-└─ users.db                # база данных (в .gitignore!)
-```
-## Roadmap / Что доделать
-```text
- Полноценная торговля (открытие/закрытие позиций)
- Настраиваемый порог изменения, интервал, топ-N пар
- Inline-кнопки и более удобное меню
- Логирование + уведомления об ошибках
- Docker + docker-compose для деплоя
- Тестнет-режим Binance
- Статистика и график PNL
+The-final-project/
+├─ API_TG.py               # Инициализация Telegram-бота
+├─ telegram_handler.py     # Основной роутер, обработчики сообщений и меню
+├─ binance_info.py         # Сканер рынка, уведомления в Telegram
+├─ exchange_info.py        # Получение информации о символах (фильтры, precision)
+├─ strategy.py             # Логика торговли: расчёт SL/TP, позиции, trading_loop
+├─ menu_robot.py           # Обработчики меню (поддержка, FAQ, стоп)
+├─ db_tg.py                # Работа с SQLite (хранение ключей, статусов, настроек)
+├─ keyb_robot.py           # Клавиатуры и меню
+├─ log_settings.py         # Настройка логирования
+├─ config.py               # Константы, базовые функции (баланс, цена, PNL)
+├─ check_user_api.py       # Валидация API-ключей Binance
+├─ users.db                # База данных (игнорируется в .gitignore)
+├─ log_tg_bot.txt          # Файл логов (игнорируется в .gitignore)
+└─ requirements.txt        # Зависимости
 ```
 
  ==============================
@@ -105,26 +103,49 @@ binance-futures-bot/
 
  # Binance Futures Scanner & Trading Bot (Telegram)
 
-A Telegram bot for scanning Binance Futures market + (in development) automated trading based on simple signals.
+A Telegram bot that scans the **Binance Futures** market in real time and automatically executes trades based on simple momentum signals.  
+Receive instant notifications about strong price movements (≥2% in 3 minutes) and control everything directly from Telegram.
 
-Get real-time notifications about strong price movements (≥2% in 3 minutes) and control your trading bot directly from Telegram.
+**Currently runs only on Binance Testnet** for safety and testing purposes.
 
 ## Current Features
 
-- Scanning USDT-margined futures pairs with 24h volume ≥ $50M
-- Price change alerts ≥ 2% over the last 20 candles (3m timeframe)
-- Input and validation of Binance API keys (Spot + Futures)
-- Start/stop scanner and "robot" (trading logic is a placeholder for now)
-- Basic settings menu and PNL statistics (in development)
-- SQLite database for storing user keys and statuses
+- **Market Scanner**  
+  Scans USDT-margined perpetual futures pairs with 24h quote volume ≥ $50M  
+  Alerts on price change ≥ **2%** over the last **20 candles** (3-minute timeframe)
 
-**Roadmap (planned features):**
+- **Automated Trading (Testnet)**  
+  Opens LONG or SHORT positions based on scanner signals  
+  Calculates dynamic **Stop-Loss** (based on recent volatility)  
+  Sets **Take-Profit** (default 2× SL distance)  
+  Risk management: configurable risk per trade (0.1–5%), max leverage (1–125×)
 
-- Real automated trading triggered by scanner signals
-- Configurable risk per trade, leverage, stop-loss / take-profit
-- Trailing stop and custom pair filters
-- Multi-user support without conflicts
+- **Binance API Integration**  
+  Secure input & validation of API keys (Futures permissions required)  
+  Works with **Binance Testnet** by default
 
+- **Telegram Interface**  
+  Start / stop scanner and trading loop  
+  Settings menu: adjust risk %, max leverage  
+  PNL command — shows unrealized profit/loss for open positions  
+  Support / FAQ / emergency Stop buttons
+
+- **Storage & Logging**  
+  SQLite database for user settings, API keys and robot status  
+  Detailed logging to `log_tg_bot.txt`
+
+- **Multi-user support**  
+  Each user has independent scanner/trading sessions (thread-based)
+
+## Roadmap (Planned Improvements)
+
+- Switch to real Binance mainnet (with careful safeguards)
+- Additional signal filters (volatility, trend)
+- Configurable scan parameters (threshold %, timeframe, candle count)
+- Trade history & performance statistics
+- Inline keyboards & richer messages
+- Error notifications & recovery mechanisms
+  
 ## Requirements
 
 - Python 3.9+
@@ -177,24 +198,19 @@ python telegram_handler.py
 ## Project Structure
 ```text
 The-final-project/
-├─ API_TG.py               # bot initialization
-├─ telegram_handler.py     # main router and message handlers
-├─ binance_info.py         # market scanner + notification logic
-├─ db_tg.py                # SQLite database operations
-├─ check_user_api.py       # Binance API key validation
-├─ keyb_robot.py           # reply keyboards
-├─ menu_robot.py           # support, FAQ, cancel logic
-├─ strategy.py             # settings + PNL (placeholder)
-└─ users.db                # user database (add to .gitignore!)
+├── API_TG.py               # Telegram bot initialization
+├── telegram_handler.py     # Main message router & menu logic
+├── binance_info.py         # Market scanner & Telegram alerts
+├── exchange_info.py        # Symbol filters, price/quantity precision
+├── strategy.py             # Trading logic: SL/TP calculation, order placement
+├── config.py               # Constants, helpers (balance, price, leverage…)
+├── db_tg.py                # SQLite operations (users, keys, settings)
+├── keyb_robot.py           # Reply keyboards
+├── menu_robot.py           # Support, FAQ, cancel handlers
+├── check_user_api.py       # Binance API key validation
+├── log_settings.py         # Logging configuration
+├── users.db                # SQLite database (should be in .gitignore)
+├── log_tg_bot.txt          # Log file (add to .gitignore)
+└── requirements.txt
 ```
 
-## Roadmap / To Do
-```text
- Implement real position opening/closing
- Add configurable change threshold, timeframe, top-N pairs
- Inline keyboards and improved menu navigation
- Proper logging + error notifications to user
- Docker + docker-compose deployment
- Binance testnet support
- PNL statistics and performance charts
-```
