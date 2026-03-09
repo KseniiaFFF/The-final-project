@@ -62,8 +62,7 @@ def edit_api_key(message):
 def get_api_key(message):
     chat_id, user_name = get_user_data(message)
     text = message.text.strip()
-    keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
-    keyboard.add(types.KeyboardButton('Стоп'))
+    # keyboard = types.ReplyKeyboardMarkup(resize_keyboard=True)
 
     if text == "Отмена":
         bot.clear_step_handler_by_chat_id(chat_id)
@@ -91,6 +90,7 @@ def get_secret_key(message):
         bot.clear_step_handler_by_chat_id(chat_id)
         logging.info(f'Exit get_secret_key {message.text} | user_name -> {user_name}, chat_id -> {message.chat.id}')
         reset_user(chat_id)
+        set_user_state(chat_id, None)
         bot.send_message(chat_id, "❌ Ввод отменён", reply_markup=types.ReplyKeyboardRemove())
         
         create_keyboards(message)
