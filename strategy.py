@@ -303,6 +303,11 @@ def trading_loop(chat_id: int):
     while is_robot_active(chat_id):
         open_positions = get_open_positions(chat_id)
 
+        if open_positions:
+                bot.send_message(chat_id, "Уже есть открытая позиция. Ждём закрытия.")
+                time.sleep(TRADE_INTERVAL)
+                continue
+
         try:
             signals = scan_market()  # [(symbol, change), ...]
             if not signals:
