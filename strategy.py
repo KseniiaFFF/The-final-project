@@ -10,6 +10,23 @@ from config import TESTNET_BASE_URL, SL_INTERVAL, TRADE_INTERVAL, get_usdt_balan
 from exchange_info import adjust_price_precision, adjust_quantity_precision
 
 
+#| Индекс | Название               | Что означает                     |
+#| ------ | ---------------------- | -------------------------------- |
+#| **0**  | Open time              | время открытия свечи (timestamp) |
+#| **1**  | Open                   | цена открытия                    |
+#| **2**  | High                   | максимальная цена                |
+#| **3**  | Low                    | минимальная цена                 |
+#| **4**  | Close                  | цена закрытия                    |
+#| **5**  | Volume                 | объём базового актива            |
+#| **6**  | Close time             | время закрытия свечи             |
+#| **7**  | Quote asset volume     | объём в USDT                     |
+#| **8**  | Number of trades       | количество сделок                |
+#| **9**  | Taker buy base volume  | объём покупок по маркету         |
+#| **10** | Taker buy quote volume | объём покупок в USDT             |
+#| **11** | Ignore                 | не используется                  |
+
+
+
 #логика и расчет для СЛ, рассчитывает средний диапазон свечей (high - low),умножает на коэффициент(MULTIPLIER) 
 def get_stop_loss_price(symbol: str, side: str, current_price: float) -> Optional[float]:
     try:
